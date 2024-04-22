@@ -7,6 +7,7 @@ namespace Unibrics.Configuration.Tests
     using General.Compound;
     using General.Formats.Csv;
     using General.Formats.Json;
+    using Mocks;
     using NSubstitute;
     using NUnit.Framework;
 
@@ -35,7 +36,7 @@ namespace Unibrics.Configuration.Tests
                         new JsonConfigsHandler(configurator),
                         new CsvConfigsHandler(),
                     })
-                }));
+                }), new LazyConfigsTester(true));
             var fetcher = Substitute.For<IConfigsFetcher>();
             var key1 = "compound";
             fetcher.GetValue(key1).Returns(raw);

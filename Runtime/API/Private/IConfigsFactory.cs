@@ -17,17 +17,21 @@
         private readonly IConfigObjectCreator configObjectCreator;
 
         private readonly IConfigValuesInjector valuesInjector;
-        
+
+        private readonly ILazyConfigsChecker lazyConfigsChecker;
+
         private const string Delimiter = "<br>";
-        
-        public ConfigsFactory(IConfigObjectCreator configObjectCreator, IConfigValuesInjector valuesInjector)
+
+        public ConfigsFactory(IConfigObjectCreator configObjectCreator, IConfigValuesInjector valuesInjector,
+            ILazyConfigsChecker lazyConfigsChecker)
         {
+            this.lazyConfigsChecker = lazyConfigsChecker;
             this.configObjectCreator = configObjectCreator;
             this.valuesInjector = valuesInjector;
         }
 
         public List<ConfigFile> PrepareConfigs(IConfigsFetcher configsFetcher,
-            List<ConfigMeta> configMetas) 
+            List<ConfigMeta> configMetas)
         {
             var keys = configsFetcher.GetKeys().ToList();
             var patcher = new ConfigsPatcher(configsFetcher);
@@ -46,15 +50,12 @@
                             $" to create MultiConfig of {configMeta.InterfaceType}. Add config file or mark it with IsOptional" +
                             $"property");
                     }
-                    
+
                     var multiObject = configObjectCreator.CreateMultiConfigFor(configMeta);
+                    var lazy = lazyConfigsChecker.AreLazyConfigEnabled();
                     foreach (var key in prefixedKeys)
                     {
-                        var config = Process(key);
-                        if (config != null)
-                        {
-                            multiObject.Add(key[prefix.Length..], config);
-                        }
+                        multiObject.Add(key[prefix.Length..], () => Process(key), lazy);
                     }
                 }
                 else
@@ -62,7 +63,8 @@
                     var key = configMeta.Key;
                     if (!keys.Contains(key))
                     {
-                        throw new Exception($"Can not find requested config '{key}' for type {configMeta.InterfaceType}");
+                        throw new Exception(
+                            $"Can not find requested config '{key}' for type {configMeta.InterfaceType}");
                     }
 
                     Process(key);
@@ -77,9 +79,9 @@
                         var configObject = configObjectCreator.CreateObject(configMeta);
                         value = patcher.TryPatch(key, value);
                         valuesInjector.InjectTo(configObject, value);
-                    
+
                         validator.OnConfigPrepared(configMeta, configObject);
-                    
+
                         result.Add(configObject);
                         return configObject;
                     }

@@ -29,6 +29,7 @@
             var timeout = AppSettings.Get<ConfigurationSettings>().TimeoutSeconds;
             
             services.Add<IConfigsFetcher>().ImplementedBy<CombinedConfigsFetcher>().AsSingleton();
+            services.Add<ILazyConfigsChecker>().ImplementedBy<LazyConfigsChecker>().AsSingleton();
             services.Add<IConfigFetchTimeoutProvider>().ImplementedByInstance(new PredefinedConfigFetchTimeoutProvider(TimeSpan.FromSeconds(timeout)));
             services.Add<IDefaultConfigsFetcher>().ImplementedBy<LocalResourcesFetcher>().AsSingleton();
             services.Add<IConfigsConfigurator>().ImplementedBy<ConfigsConfigurator>().AsSingleton();

@@ -8,6 +8,7 @@
     using General;
     using General.Formats.Json;
     using General.Multi;
+    using Mocks;
     using NUnit.Framework;
 
     [TestFixture]
@@ -21,7 +22,7 @@
             factory = new ConfigsFactory(new ActivatorConfigObjectsCreator(), new MultiFormatConfigValuesHandler(new List<IFormattedConfigValuesHandler>()
             {
                 new JsonConfigsHandler(new ConfigsConfigurator())
-            }));
+            }), new LazyConfigsTester(true));
         }
 
         [Test]

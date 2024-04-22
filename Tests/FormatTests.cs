@@ -6,6 +6,7 @@ namespace Unibrics.Configuration.Tests
     using General;
     using General.Formats.Csv;
     using General.Formats.Json;
+    using Mocks;
     using NSubstitute;
     using NUnit.Framework;
 
@@ -25,7 +26,7 @@ namespace Unibrics.Configuration.Tests
                 new MultiFormatConfigValuesHandler(new List<IFormattedConfigValuesHandler>()
                 {
                     new JsonConfigsHandler(configurator), new CsvConfigsHandler()
-                }));
+                }), new LazyConfigsTester(true));
             var fetcher = Substitute.For<IConfigsFetcher>();
             var jsonKey = "json_key";
             var csvKey = "csv_key";
