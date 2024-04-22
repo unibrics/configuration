@@ -6,14 +6,14 @@ namespace Unibrics.Configuration.General.Multi
 
     abstract class MultiConfig
     {
-        internal abstract void Add(string key, Func<ConfigFile> config, bool lazy);
+        internal abstract void Add(string key, Func<ConfigFile> getter, bool lazy);
     }
 
     class MultiConfig<TConfig> : MultiConfig, IMultiConfig<TConfig> where TConfig : class
     {
         private readonly Dictionary<string, TConfig> configs = new();
         
-        private readonly Dictionary<string, Func<TConfig>> lazyGetters = new();
+        private readonly Dictionary<string, Func<ConfigFile>> lazyGetters = new();
 
         public TConfig GetBuyId(string id)
         {
@@ -24,9 +24,14 @@ namespace Unibrics.Configuration.General.Multi
 
             if (lazyGetters.TryGetValue(id, out var getter))
             {
-                var createdConfig = getter();
-                configs[id] = createdConfig;
-                return createdConfig;
+                var rawConfig = getter();
+                if (rawConfig is not TConfig typedConfig)
+                {
+                    throw new Exception($"Config type {rawConfig.GetType()} must implement interface {typeof(TConfig)} " +
+                        $"to be used in MultiConfig");
+                }
+                configs[id] = typedConfig;
+                return typedConfig;
             }
 
             return default;
@@ -39,21 +44,21 @@ namespace Unibrics.Configuration.General.Multi
             return configs.Select(config => (config.Key, config.Value));
         }
 
-        internal override void Add(string key, Func<ConfigFile> config, bool lazy)
+        internal override void Add(string key, Func<ConfigFile> getter, bool lazy)
         {
-            if (config is not Func<TConfig> typed)
-            {
-                throw new Exception($"Config type {config.GetType()} must implement interface {typeof(TConfig)} " +
-                    $"to be used in MultiConfig");
-            }
-
             if (lazy)
             {
-                lazyGetters.Add(key, typed);
+                lazyGetters.Add(key, getter);
             }
             else
             {
-                configs.Add(key, typed());
+                var value = getter();
+                if (value is not TConfig typed)
+                {
+                    throw new Exception($"Config type {getter.GetType()} must implement interface {typeof(TConfig)} " +
+                        $"to be used in MultiConfig");
+                }
+                configs.Add(key, typed);
             }
         }
     }
