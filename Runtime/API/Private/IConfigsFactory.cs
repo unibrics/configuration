@@ -21,7 +21,8 @@
         private readonly ILazyConfigsChecker lazyConfigsChecker;
 
         private const string Delimiter = "<br>";
-
+        
+        
         public ConfigsFactory(IConfigObjectCreator configObjectCreator, IConfigValuesInjector valuesInjector,
             ILazyConfigsChecker lazyConfigsChecker)
         {
@@ -36,6 +37,7 @@
             var keys = configsFetcher.GetKeys().ToList();
             var patcher = new ConfigsPatcher(configsFetcher);
             var validator = new ConfigsValidator(configMetas);
+            var lazy = lazyConfigsChecker.AreLazyConfigEnabled();
 
             var result = new List<ConfigFile>();
             foreach (var configMeta in configMetas)
@@ -52,7 +54,6 @@
                     }
 
                     var multiObject = configObjectCreator.CreateMultiConfigFor(configMeta);
-                    var lazy = lazyConfigsChecker.AreLazyConfigEnabled();
                     foreach (var key in prefixedKeys)
                     {
                         multiObject.Add(key[prefix.Length..], () => Process(key), lazy);

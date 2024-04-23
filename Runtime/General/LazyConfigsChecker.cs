@@ -1,6 +1,5 @@
 namespace Unibrics.Configuration.General
 {
-    using Codice.Utils;
     using Core.Config;
     using Settings;
 
