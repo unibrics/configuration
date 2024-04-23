@@ -4,10 +4,10 @@ namespace Unibrics.Configuration.General
 
     public interface IMultiConfig<TConfig>
     {
-        TConfig GetBuyId(string id);
+        TConfig GetByKey(string key);
 
         IEnumerable<TConfig> GetAll();
 
-        IEnumerable<(string key, TConfig value)> GetAllWithKeys();
+        IEnumerable<string> GetAllKeys();
     }
 }

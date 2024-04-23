@@ -15,14 +15,14 @@ namespace Unibrics.Configuration.General.Multi
         
         private readonly Dictionary<string, Func<ConfigFile>> lazyGetters = new();
 
-        public TConfig GetBuyId(string id)
+        public TConfig GetByKey(string key)
         {
-            if (configs.TryGetValue(id, out var config))
+            if (configs.TryGetValue(key, out var config))
             {
                 return config;
             }
 
-            if (lazyGetters.TryGetValue(id, out var getter))
+            if (lazyGetters.TryGetValue(key, out var getter))
             {
                 var rawConfig = getter();
                 if (rawConfig is not TConfig typedConfig)
@@ -30,7 +30,7 @@ namespace Unibrics.Configuration.General.Multi
                     throw new Exception($"Config type {rawConfig.GetType()} must implement interface {typeof(TConfig)} " +
                         $"to be used in MultiConfig");
                 }
-                configs[id] = typedConfig;
+                configs[key] = typedConfig;
                 return typedConfig;
             }
 
@@ -39,9 +39,9 @@ namespace Unibrics.Configuration.General.Multi
 
         public IEnumerable<TConfig> GetAll() => configs.Values;
         
-        public IEnumerable<(string key, TConfig value)> GetAllWithKeys()
+        public IEnumerable<string> GetAllKeys()
         {
-            return configs.Select(config => (config.Key, config.Value));
+            return configs.Select(config => config.Key).Concat(lazyGetters.Select(pair => pair.Key));
         }
 
         internal override void Add(string key, Func<ConfigFile> getter, bool lazy)
