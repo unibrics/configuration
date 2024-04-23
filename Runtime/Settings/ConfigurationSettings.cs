@@ -6,7 +6,8 @@ namespace Unibrics.Configuration.Settings
     [InstallWithId("configuration")]
     public class ConfigurationSettings : IAppSettingsSection, IConfigurationFetchingTimeoutProvider
     {
-
+        public bool EnableLazyConfigs { get; set; }
+        
         public float TimeoutSeconds { get; set; }
     }
 
