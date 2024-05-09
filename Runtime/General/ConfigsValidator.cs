@@ -18,7 +18,10 @@
         {
             if (configObject is ConfigFile)
             {
-                preparedObjects[configMeta] = configObject;    
+                lock (preparedObjects)
+                {
+                    preparedObjects[configMeta] = configObject;    
+                }
             }
             else
             {
