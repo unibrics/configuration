@@ -1,6 +1,7 @@
 ﻿namespace Unibrics.Configuration.General.Fetch
 {
     using Core.Version;
+    using UnityEngine;
     using Zenject;
 
     public interface IConfigApplyCheckerFactory
@@ -21,6 +22,7 @@
         
         public ConfigApplyChecker Create(ApplyMode applyMode, string key)
         {
+            Debug.Log($"Apply mode is {applyMode} for key {key}");
             switch (applyMode)
             {
                 case ApplyMode.EveryTimeCache:
