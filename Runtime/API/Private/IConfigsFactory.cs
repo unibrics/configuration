@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using Newtonsoft.Json;
     using UnityEngine;
     using Utils.Json;
@@ -22,8 +21,8 @@
         private readonly ILazyConfigsChecker lazyConfigsChecker;
 
         private const string Delimiter = "<br>";
-
-
+        
+        
         public ConfigsFactory(IConfigObjectCreator configObjectCreator, IConfigValuesInjector valuesInjector,
             ILazyConfigsChecker lazyConfigsChecker)
         {
@@ -42,10 +41,6 @@
 
             var result = new List<ConfigFile>();
             foreach (var configMeta in configMetas)
-            {
-                
-            }
-            Parallel.ForEach(configMetas, configMeta =>
             {
                 if (configMeta.IsMultiConfig)
                 {
@@ -99,8 +94,8 @@
                     }
 
                     return null;
-                } 
-            });
+                }
+            }
 
             validator.Validate();
             return result;
