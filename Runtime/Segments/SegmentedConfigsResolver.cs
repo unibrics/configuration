@@ -2,10 +2,17 @@ namespace Unibrics.Configuration.General
 {
     using System.Collections.Generic;
 
-    public class SegmentedConfigsResolver : IConfigValueResolver
+    class SegmentedConfigsResolver : IConfigValueResolver
     {
         private readonly IDictionary<string, SegmentedConfig> values = new Dictionary<string, SegmentedConfig>();
-        
+
+        private readonly ISegmentsSelector segmentsSelector;
+
+        public SegmentedConfigsResolver(ISegmentsSelector segmentsSelector)
+        {
+            this.segmentsSelector = segmentsSelector;
+        }
+
         private const string SegmentDelimiter = "__";
 
         public void PutValue(string key, string value)
@@ -18,8 +25,8 @@ namespace Unibrics.Configuration.General
                 configKey = split[0];
                 segment = split[1];
             }
-            
-            if (!values.TryGetValue(key, out var segmentedConfig))
+
+            if (!values.TryGetValue(configKey, out var segmentedConfig))
             {
                 segmentedConfig = new SegmentedConfig();
                 values[configKey] = segmentedConfig;
@@ -37,7 +44,20 @@ namespace Unibrics.Configuration.General
 
         public string GetValue(string key)
         {
-            return values[key].DefaultValue;
+            var segmentedConfig = values[key];
+            if (!segmentedConfig.HasSegments)
+            {
+                return segmentedConfig.DefaultValue;
+            }
+
+            var availableSegments = segmentedConfig.PossibleSegments;
+            var selectedSegment = segmentsSelector.GetActiveSegment(availableSegments);
+            if (selectedSegment == null)
+            {
+                return segmentedConfig.DefaultValue;
+            }
+
+            return segmentedConfig.GetSegmentValue(selectedSegment);
         }
 
         public IEnumerable<string> GetKeys() => values.Keys;

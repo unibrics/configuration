@@ -33,7 +33,7 @@ namespace Unibrics.Configuration.General
             var lazy = lazyConfigsChecker.AreLazyConfigEnabled();
 
             var result = new List<ConfigFile>();
-            foreach (var configMeta in configMetas)
+            foreach (var configMeta in configMetas.OrderByDescending(meta => meta.Priority))
             {
                 if (configMeta.IsMultiConfig)
                 {

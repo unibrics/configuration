@@ -6,6 +6,7 @@ namespace Unibrics.Configuration.Tests.Parser
     using Expressions.Tokens;
     using NUnit.Framework;
     using UnityEngine;
+    using ExpressionEvaluator = Expressions.ExpressionEvaluator;
 
     [TestFixture]
     public class ExpressionTests
@@ -13,13 +14,12 @@ namespace Unibrics.Configuration.Tests.Parser
         public object Evaluate(string expression, Dictionary<string, object> variables = null)
         {
             var tokenizer = new Tokenizer();
-            var parser = new Parser();
-            var evaluator = new Evaluator();
+            var parser = new TokensParser();
+            var evaluator = new ExpressionEvaluator(tokenizer, parser);
 
             var tokens = tokenizer.Tokenize(expression);
-            Debug.Log($"tokens: {string.Join(",", tokens)}");
             var ast = parser.Parse(tokens);
-            return evaluator.Evaluate(ast, variables ?? new Dictionary<string, object>());
+            return evaluator.Evaluate(expression, variables ?? new Dictionary<string, object>());
         }
 
         [Test]

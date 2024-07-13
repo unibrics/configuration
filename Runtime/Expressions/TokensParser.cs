@@ -5,7 +5,12 @@ namespace Unibrics.Configuration.Expressions
     using Tokens;
     using Types;
 
-    public class Parser
+    interface ITokensParser
+    {
+        Expression Parse(List<Token> tokens);
+    }
+    
+    class TokensParser : ITokensParser
     {
         private List<Token> tokens;
         private int position;

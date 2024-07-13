@@ -4,7 +4,12 @@ namespace Unibrics.Configuration.Expressions.Tokens
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class Tokenizer
+    interface ITokenizer
+    {
+        List<Token> Tokenize(string expression);
+    }
+    
+    class Tokenizer : ITokenizer
     {
         private static readonly Dictionary<string, TokenType> Keywords = new()
         {

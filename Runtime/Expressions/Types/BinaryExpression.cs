@@ -21,10 +21,8 @@ namespace Unibrics.Configuration.Expressions.Types
 
     public override ExpressionResult Evaluate(Dictionary<string, object> variables)
     {
-        Debug.Log($"Evaluating binary");
         var leftValue = Left.Evaluate(variables);
         var rightValue = Right.Evaluate(variables);
-        Debug.Log($"operator {Operator} {leftValue.AsString} {rightValue.AsString}");
         var result = Operator switch
         {
             "and" => leftValue.AsBool && rightValue.AsBool,

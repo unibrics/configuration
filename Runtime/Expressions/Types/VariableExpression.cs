@@ -2,6 +2,8 @@ namespace Unibrics.Configuration.Expressions.Types
 {
     using System;
     using System.Collections.Generic;
+    using System.Runtime.InteropServices;
+    using Utils;
 
     public class VariableExpression : Expression
     {
@@ -16,7 +18,7 @@ namespace Unibrics.Configuration.Expressions.Types
         {
             if (!variables.TryGetValue(Name, out var variable))
             {
-                throw new Exception($"Unknown variable: {Name}");
+                throw new ExpressionException($"Unknown variable: {Name}");
             }
 
             return new ExpressionResult(variable);

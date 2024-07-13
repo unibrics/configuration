@@ -4,6 +4,9 @@
     using System.Linq;
     using Core;
     using Core.Services;
+    using Expressions;
+    using Expressions.API;
+    using Expressions.Tokens;
     using General;
     using General.ABTests;
     using General.Application;
@@ -16,6 +19,7 @@
     using Saves.General.Fetch;
     using Settings;
     using UnityEngine;
+    using ExpressionEvaluator = Expressions.ExpressionEvaluator;
 
     [Install]
     public class ConfigurationInstaller : ModuleInstaller
@@ -36,7 +40,6 @@
             services.Add<IConfigApplyCheckerFactory>().ImplementedBy<ConfigApplyCheckerFactory>().AsSingleton();
             services.Add<IConfigMetaProvider>().ImplementedByInstance(configMetaProvider);
             services.Add<IConfigsRegistry>().ImplementedBy<ConfigsRegistry>().AsSingleton();
-            services.Add<IConfigValueResolver>().ImplementedBy<SegmentedConfigsResolver>().AsSingleton();
             services.Add<IConfigsFactory>().ImplementedBy<ConfigsFactory>().AsSingleton();
             services.Add<IConfigValuesInjector, IConfigMetadataExtractor>().ImplementedBy<MultiFormatConfigValuesHandler>().AsSingleton();
             services.Add<IAppliedConfigsHolder>().ImplementedBy<AppliedConfigsHolder>().AsSingleton();
@@ -46,8 +49,15 @@
             services.Add<IFormattedConfigValuesHandler, ISingleFormatConfigValuesHandler>().ImplementedBy<CsvConfigsHandler>().AsSingleton();
             services.Add<IFormattedConfigValuesHandler>().ImplementedBy<CompoundConfigsHandler>().AsSingleton();
             
+            services.Add<IConfigValueResolver>().ImplementedBy<SegmentedConfigsResolver>().AsSingleton();
+            services.Add<ISegmentsSelector>().ImplementedBy<SegmentsSelector>().AsSingleton();
+            services.Add<IExpressionEvaluator>().ImplementedBy<ExpressionEvaluator>().AsSingleton();
+            services.Add<ITokenizer>().ImplementedBy<Tokenizer>().AsSingleton();
+            services.Add<ITokensParser>().ImplementedBy<TokensParser>().AsSingleton();
+            
             // this is potentially rebindable part
             services.Add<IVersionRunsCounter>().ImplementedBy<LocalVersionsRunCounter>().AsSingleton();
+            services.Add<ISegmentExpressionVariablesProvider>().ImplementedBy<EmptySegmentExpressionVariablesProvider>().AsSingleton();
             services.Add<IAppliedConfigsSaver>().ImplementedBy<LocalAppliedConfigsSaver>().AsSingleton();
             services.Add<IABTestsReporter>().ImplementedBy<LogAbTestsReporter>().AsSingleton();
             
