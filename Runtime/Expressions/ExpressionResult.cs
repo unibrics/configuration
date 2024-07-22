@@ -43,7 +43,6 @@ namespace Unibrics.Configuration.Expressions
 
         protected bool Equals(ExpressionResult other)
         {
-            Debug.Log($"Comparing {value.GetType()}, {other.value.GetType()} - {value.Equals(other.value)}");
             return Equals(value, other.value);
         }
 
