@@ -1,6 +1,7 @@
 namespace Unibrics.Configuration.Expressions
 {
     using System;
+    using System.Globalization;
     using UnityEngine;
 
     public class ExpressionResult
@@ -12,16 +13,9 @@ namespace Unibrics.Configuration.Expressions
             this.value = value;
         }
 
-        public bool AsBool
-        {
-            get
-            {
-                Debug.Log($"Converting to bool: {value}");
-                return Convert.ToBoolean(value);
-            }
-        }
+        public bool AsBool => Convert.ToBoolean(value);
 
-        public double AsDouble => Convert.ToDouble(value);
+        public double AsDouble => Convert.ToDouble(value, CultureInfo.InvariantCulture);
 
         public string AsString => Convert.ToString(value);
 
@@ -49,6 +43,7 @@ namespace Unibrics.Configuration.Expressions
 
         protected bool Equals(ExpressionResult other)
         {
+            Debug.Log($"Comparing {value.GetType()}, {other.value.GetType()} - {value.Equals(other.value)}");
             return Equals(value, other.value);
         }
 

@@ -21,6 +21,11 @@ namespace Unibrics.Configuration.Expressions.Types
                 throw new ExpressionException($"Unknown variable: {Name}");
             }
 
+            if (variable is int intVariable)
+            {
+                // to exclude possible comparisons between different types, all numbers are converted to doubles
+                return new ExpressionResult((double)intVariable);    
+            }
             return new ExpressionResult(variable);
         }
     }

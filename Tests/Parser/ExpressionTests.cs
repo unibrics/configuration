@@ -19,7 +19,7 @@ namespace Unibrics.Configuration.Tests.Parser
 
             var tokens = tokenizer.Tokenize(expression);
             var ast = parser.Parse(tokens);
-            return evaluator.Evaluate(expression, variables ?? new Dictionary<string, object>());
+            return evaluator.Evaluate(expression, variables ?? new Dictionary<string, object>()).Result;
         }
 
         [Test]
@@ -64,6 +64,26 @@ namespace Unibrics.Configuration.Tests.Parser
             {
                 ["a"] = 15
             }), Is.True);
+            
+        }
+        
+        [Test]
+        public void _07NumberEquality()
+        {
+            Assert.That(Evaluate("a == 0", new Dictionary<string, object>()
+            {
+                ["a"] = 0
+            }), Is.True);
+            
+            Assert.That(Evaluate("a != 0", new Dictionary<string, object>()
+            {
+                ["a"] = 0
+            }), Is.False);
+            
+            Assert.That(Evaluate("a != 5", new Dictionary<string, object>()
+            {
+                ["a"] = 1
+            }), Is.True);
         }
 
         [Test]
@@ -93,7 +113,7 @@ namespace Unibrics.Configuration.Tests.Parser
         }
         
         [Test]
-        public void _05Sets()
+        public void _06Sets()
         {
             Assert.That(Evaluate("5 in [1,  2, 4, 5]"), Is.True);
             Assert.That(Evaluate("'ab' in [1,2, '4', 5]"), Is.False);
