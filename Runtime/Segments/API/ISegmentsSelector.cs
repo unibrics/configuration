@@ -11,7 +11,6 @@ namespace Unibrics.Configuration.General
     {
         [CanBeNull]
         string GetActiveSegment(List<string> variants);
-
-        IEnumerable<(string segment, string description)> GetAllActiveSegments();
     }
+
 }

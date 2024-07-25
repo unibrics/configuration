@@ -50,7 +50,7 @@
             services.Add<IFormattedConfigValuesHandler>().ImplementedBy<CompoundConfigsHandler>().AsSingleton();
             
             services.Add<IConfigValueResolver>().ImplementedBy<SegmentedConfigsResolver>().AsSingleton();
-            services.Add<ISegmentsSelector>().ImplementedBy<SegmentsSelector>().AsSingleton();
+            services.Add<ISegmentsSelector, IActiveSegmentsProvider>().ImplementedBy<SegmentsSelector>().AsSingleton();
             services.Add<IExpressionEvaluator>().ImplementedBy<ExpressionEvaluator>().AsSingleton();
             services.Add<ITokenizer>().ImplementedBy<Tokenizer>().AsSingleton();
             services.Add<ITokensParser>().ImplementedBy<TokensParser>().AsSingleton();

@@ -7,7 +7,7 @@ namespace Unibrics.Configuration.General
     using Expressions.API;
     using Logs;
 
-    class SegmentsSelector : ISegmentsSelector
+    class SegmentsSelector : ISegmentsSelector, IActiveSegmentsProvider
     {
         private readonly IExpressionEvaluator evaluator;
 
