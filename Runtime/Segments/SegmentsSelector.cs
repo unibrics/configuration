@@ -1,5 +1,6 @@
 namespace Unibrics.Configuration.General
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Config;
@@ -66,6 +67,18 @@ namespace Unibrics.Configuration.General
             }
 
             return null;
+        }
+
+        public IEnumerable<(string segment, string description)> GetAllActiveSegments()
+        {
+            foreach (var pair in config.GetAllSegments())
+            {
+                var result = evaluator.Evaluate(pair.expression, variablesProvider.GetVariables());
+                if (result is { HasErrors: false, Result: true })
+                {
+                    yield return pair;
+                }
+            }
         }
 
         private void Log(string message)

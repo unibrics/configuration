@@ -1,5 +1,6 @@
 namespace Unibrics.Configuration.General.Config
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Core;
@@ -8,6 +9,8 @@ namespace Unibrics.Configuration.General.Config
     public interface ISegmentsConfig
     {
         SegmentDescription GetSegmentExpression(string segment);
+
+        IEnumerable<(string segment, string expression)> GetAllSegments();
     }
 
     public class SegmentsConfig : ConfigFile, ISegmentsConfig
@@ -37,6 +40,14 @@ namespace Unibrics.Configuration.General.Config
                 Name = segment,
                 Value = Segments[segment]
             };
+        }
+
+        public IEnumerable<(string segment, string expression)> GetAllSegments()
+        {
+            foreach (var pair in Segments)
+            {
+                yield return (pair.Key, pair.Value);
+            }
         }
     }
 
