@@ -28,8 +28,10 @@ namespace Unibrics.Configuration.General
         {
             var orderedSegments = variants
                 .Select(segment => config.GetSegmentExpression(segment))
-                .OrderBy(description => description.Order);
-
+                .OrderBy(description => description.Order)
+                .ToList();
+            
+            var variables = variablesProvider.GetVariables();
             foreach (var segment in orderedSegments)
             {
                 if (!segment.IsDefined)
@@ -46,8 +48,8 @@ namespace Unibrics.Configuration.General
                         return segment.Name;
                     }
                 }
-                
-                var result = evaluator.Evaluate(segment.Value, variablesProvider.GetVariables());
+
+                var result = evaluator.Evaluate(segment.Value, variables);
                 if (result.HasErrors)
                 {
                     Log($"Evaluating segment '{segment.Name}' ('{segment.Value}') ends with errors, skipping.");
