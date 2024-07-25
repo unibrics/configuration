@@ -17,6 +17,8 @@ namespace Unibrics.Configuration.General
 
         private readonly Dictionary<string, bool> cachedEvaluations = new();
 
+        private Dictionary<string, object> cachedVariables;
+
         public SegmentsSelector(IExpressionEvaluator evaluator, ISegmentsConfig config, ISegmentExpressionVariablesProvider variablesProvider)
         {
             this.evaluator = evaluator;
@@ -30,8 +32,11 @@ namespace Unibrics.Configuration.General
                 .Select(segment => config.GetSegmentExpression(segment))
                 .OrderBy(description => description.Order)
                 .ToList();
-            
-            var variables = variablesProvider.GetVariables();
+
+            if (cachedVariables == null)
+            {
+                cachedVariables = variablesProvider.GetVariables();
+            }
             foreach (var segment in orderedSegments)
             {
                 if (!segment.IsDefined)
@@ -49,7 +54,7 @@ namespace Unibrics.Configuration.General
                     }
                 }
 
-                var result = evaluator.Evaluate(segment.Value, variables);
+                var result = evaluator.Evaluate(segment.Value, cachedVariables);
                 if (result.HasErrors)
                 {
                     Log($"Evaluating segment '{segment.Name}' ('{segment.Value}') ends with errors, skipping.");

@@ -4,9 +4,11 @@
     using System.Collections.Generic;
     using System.Linq;
     using ABTests;
+    using Core.Config;
     using Core.Features;
     using Core.Version;
     using Cysharp.Threading.Tasks;
+    using Settings;
     using Zenject;
     using Logger = Logs.Logger;
 
@@ -41,6 +43,9 @@
 
         [Inject]
         public IConfigValueResolver ConfigsResolver { get; set; }
+
+        [Inject]
+        public IAppSettings AppSettings { get; set; }
 
         private IConfigsFetcher remoteFetcher;
         
@@ -97,7 +102,8 @@
             var remoteKeys = remoteFetcher.GetKeys().ToList();
             var version = VersionProvider.FullVersion;
             var keys = GetAllConfigKeys(version);
-            var logSuffix = "</color>\n\n<color=white>\n";
+            var color = AppSettings.Get<ConfigurationSettings>().LogColor;
+            var logSuffix = $"</color>\n\n<color={color}>\n";
             
             foreach (var key in keys)
             {
