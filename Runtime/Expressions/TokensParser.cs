@@ -2,6 +2,7 @@ namespace Unibrics.Configuration.Expressions
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using Tokens;
     using Types;
 
@@ -74,7 +75,7 @@ namespace Unibrics.Configuration.Expressions
         {
             if (Match(TokenType.Number))
             {
-                return new LiteralExpression(double.Parse(Advance().Value));
+                return new LiteralExpression(double.Parse(Advance().Value, CultureInfo.InvariantCulture));
             }
             
             if (Match(TokenType.String))
