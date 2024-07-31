@@ -68,6 +68,23 @@ namespace Unibrics.Configuration.Tests.Parser
         }
         
         [Test]
+        public void _08Floats()
+        {
+            Assert.That(Evaluate("3.1 < 5"), Is.True);
+            Assert.That(Evaluate("b == 3.2", new Dictionary<string, object>()
+            {
+                ["b"] = 3.2
+            }), Is.True);
+            Assert.That(Evaluate("7.1 >= 7.1"), Is.True);
+            Assert.That(Evaluate("0 > -1.6"), Is.False);
+            Assert.That(Evaluate("a == a", new Dictionary<string, object>()
+            {
+                ["a"] = 15.2
+            }), Is.True);
+            
+        }
+        
+        [Test]
         public void _07NumberEquality()
         {
             Assert.That(Evaluate("a == 0", new Dictionary<string, object>()

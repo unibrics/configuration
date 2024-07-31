@@ -91,12 +91,13 @@ namespace Unibrics.Configuration.Expressions.Tokens
                 }
                 else if (char.IsDigit(expression[i]))
                 {
-                    var start = i;
-                    while (i < expression.Length && char.IsDigit(expression[i]))
-                        i++;
-
-                    var value = expression.Substring(start, i - start);
-                    tokens.Add(new Token(TokenType.Number, value));
+                    i = ParseNumber();
+                }
+                else if (expression[i] == '-')
+                {
+                    // negative number case
+                    i++;
+                    i = ParseNumber();
                 }
                 else if (Operators.Contains(expression[i]))
                 {
@@ -123,6 +124,17 @@ namespace Unibrics.Configuration.Expressions.Tokens
             }
 
             return tokens;
+
+            int ParseNumber()
+            {
+                var start = i;
+                while (i < expression.Length && (char.IsDigit(expression[i]) || expression[i] == '.'))
+                    i++;
+
+                var value = expression.Substring(start, i - start);
+                tokens.Add(new Token(TokenType.Number, value));
+                return i;
+            }
         }
     }
 }
