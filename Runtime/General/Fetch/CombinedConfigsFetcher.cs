@@ -33,9 +33,6 @@
         public IVersionProvider VersionProvider { get; set; }
 
         [Inject]
-        public List<IABTestsReporter> AbTestsReporters { get; set; }
-
-        [Inject]
         public IDefaultConfigsFetcher DefaultValuesFetcher { get; set; }
 
         [Inject]
@@ -127,11 +124,6 @@
                 {
                     Logger.Log("Config", $"Config '{key}' is applied from remote value{logSuffix}{remoteValue}");
                     PutValue(key, remoteValue);
-
-                    if (metadata.HasActivationEvent)
-                    {
-                        AbTestsReporters.ForEach(reporter => reporter.ReportTestActivation(metadata));;
-                    }
 
                     if (applyChecker.ShouldCache())
                     {
