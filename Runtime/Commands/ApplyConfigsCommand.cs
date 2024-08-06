@@ -6,7 +6,6 @@
     using Cysharp.Threading.Tasks;
     using General;
     using General.ABTests;
-    using NSubstitute;
     using Zenject;
 
     public abstract class ApplyConfigsCommand : ExecutableCommand
