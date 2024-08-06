@@ -9,6 +9,8 @@ namespace Unibrics.Configuration.Settings
         public bool EnableLazyConfigs { get; set; }
         
         public float TimeoutSeconds { get; set; }
+
+        public string LogColor { get; set; } = "white";
     }
 
     internal interface IConfigurationFetchingTimeoutProvider

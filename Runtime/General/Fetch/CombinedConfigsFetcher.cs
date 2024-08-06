@@ -4,11 +4,11 @@
     using System.Collections.Generic;
     using System.Linq;
     using ABTests;
+    using Core.Config;
     using Core.Features;
     using Core.Version;
     using Cysharp.Threading.Tasks;
-    using Newtonsoft.Json;
-    using UnityEngine;
+    using Settings;
     using Zenject;
     using Logger = Logs.Logger;
 
@@ -33,15 +33,16 @@
         public IVersionProvider VersionProvider { get; set; }
 
         [Inject]
-        public List<IABTestsReporter> AbTestsReporters { get; set; }
-
-        [Inject]
         public IDefaultConfigsFetcher DefaultValuesFetcher { get; set; }
 
         [Inject]
         public IConfigMetadataExtractor MetadataExtractor { get; set; }
 
-        private readonly IDictionary<string, string> values = new Dictionary<string, string>();
+        [Inject]
+        public IConfigValueResolver ConfigsResolver { get; set; }
+
+        [Inject]
+        public IAppSettings AppSettings { get; set; }
 
         private IConfigsFetcher remoteFetcher;
         
@@ -98,7 +99,8 @@
             var remoteKeys = remoteFetcher.GetKeys().ToList();
             var version = VersionProvider.FullVersion;
             var keys = GetAllConfigKeys(version);
-            var logSuffix = "</color>\n\n<color=white>\n";
+            var color = AppSettings.Get<ConfigurationSettings>().LogColor;
+            var logSuffix = $"</color>\n\n<color={color}>\n";
             
             foreach (var key in keys)
             {
@@ -121,12 +123,7 @@
                 if (applyChecker.ShouldApply())
                 {
                     Logger.Log("Config", $"Config '{key}' is applied from remote value{logSuffix}{remoteValue}");
-                    values[key] = remoteValue;
-
-                    if (metadata.HasActivationEvent)
-                    {
-                        AbTestsReporters.ForEach(reporter => reporter.ReportTestActivation(metadata));;
-                    }
+                    PutValue(key, remoteValue);
 
                     if (applyChecker.ShouldCache())
                     {
@@ -157,7 +154,7 @@
                 if (appliedConfig != null)
                 {
                     Logger.Log("Config", $"Config '{key}' is taken from cache{logSuffix}{appliedConfig}");
-                    values[key] = appliedConfig;
+                    PutValue(key, appliedConfig);
                     return;
                 }
 
@@ -171,24 +168,25 @@
                 Logger.Log("Config", $"Config '{key}' is taken from local value{logSuffix}{appliedConfig}");
                 if (appliedConfig != null)
                 {
-                    values[key] = appliedConfig;
+                    PutValue(key, appliedConfig);
                 }
             }
         }
 
+        private void PutValue(string key, string value)
+        {
+            ConfigsResolver.PutValue(key, value);
+        }
+
         public IEnumerable<string> GetKeys()
         {
-            return values.Keys;
+            return ConfigsResolver.GetKeys();
         }
 
         public string GetValue(string key)
         {
-            return values[key];
+            return ConfigsResolver.GetValue(key);
         }
 
-        public bool HasKey(string key)
-        {
-            return values.ContainsKey(key);
-        }
     }
 }

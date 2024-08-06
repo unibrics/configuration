@@ -13,12 +13,11 @@
         IEnumerable<string> GetKeys();
 
         string GetValue(string key);
-
-        bool HasKey(string key);
+       
     }
 
     public interface IDefaultConfigsFetcher : IConfigsFetcher
     {
-        
+        bool HasKey(string key);
     }
 }

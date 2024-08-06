@@ -37,7 +37,8 @@
                     InterfaceType = type,
                     LocalOnly = attr.LocalOnly,
                     IsMultiConfig = attr.IsMultiConfig,
-                    IsOptional = attr.IsOptional
+                    IsOptional = attr.IsOptional,
+                    Priority = attr.Priority
                 });
             }
 

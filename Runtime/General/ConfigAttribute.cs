@@ -1,6 +1,7 @@
 ﻿namespace Unibrics.Configuration.General
 {
     using System;
+    using Core;
     using JetBrains.Annotations;
 
     [AttributeUsage(AttributeTargets.Interface), MeansImplicitUse]
@@ -15,6 +16,8 @@
         public bool IsMultiConfig { get; set; }
         
         public bool IsOptional { get; set; }
+
+        public Priority Priority { get; set; } = Priority.Simple;
 
         public ConfigAttribute(string key, Type implementedBy)
         {
